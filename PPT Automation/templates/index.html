@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data Search</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Search and Generate PPT</h1>
+
+    <!-- General Search Form -->
+    <section class="search-section">
+        <h2>General Search</h2>
+        <form action="/general_search" method="POST">
+            <input type="text" name="general_search_term" placeholder="Enter keyword..." required>
+            <button type="submit">Search</button>
+        </form>
+        {% if search_term %}
+            <p>Results for: <strong>{{ search_term }}</strong></p>
+        {% endif %}
+        {% if data_with_columns %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                            {% if col not in ['QRCodeURL', 'ImgURL'] %}
+                                <th>{{ col }}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data_with_columns %}
+                        <tr>
+                            {% for col in columns %}
+                                {% if col not in ['QRCodeURL', 'ImgURL'] %}
+                                    <td>{{ row[col] }}</td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
+    </section>
+
+    <!-- Specific Search Form -->
+    <section class="search-section">
+        <h2>Specific Search</h2>
+        <form action="/specific_search" method="POST">
+            <label for="column">Choose a column:</label>
+            <select name="column" required>
+                {% for col in columns %}
+                    <option value="{{ col }}">{{ col }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="template">Select PPT Template:</label>
+            <select name="template" required>
+                <option value="Sample-Landscape.pptx">Landscape</option>
+                <option value="Sample-portrait.pptx">Portrait</option>
+            </select>
+
+            <input type="text" name="specific_search_term" placeholder="Enter search term..." required>
+            <button type="submit">Generate PPT</button>
+        </form>
+    </section>
+</body>
+</html>
